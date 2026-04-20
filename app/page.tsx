@@ -1,65 +1,117 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
+import { CTAButton } from "@/components/cta-button";
+import { SectionContainer } from "@/components/section-container";
+import { FeatureCard } from "@/components/feature-card";
+import { Badge } from "@/components/ui/badge";
+import { MotionSection } from "@/components/motion-section";
+import { FeatureDemoModal } from "@/components/feature-demo-modal";
+import { SmoothScroll } from "@/components/smooth-scroll";
+import { SpotsCarousel } from "@/components/spots-carousel";
+import { Marquee } from "@/components/marquee";
+import { MeetupsList } from "@/components/meetups-list";
+import { FeaturesRow } from "@/components/features-row";
+import { HeroGeometric } from "@/components/hero-geometric";
+import { TrustSection } from "@/components/trust-section";
+import { NewsletterSection } from "@/components/newsletter-section";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  MapPin,
+  Users,
+  Calendar,
+  MessageCircle,
+  ShieldCheck,
+  Bell,
+  Heart,
+  Search,
+  CheckCircle2,
+  ArrowRight,
+  Clock,
+} from "lucide-react";
 
 export default function Home() {
+  const [activeFeature, setActiveFeature] = useState<string | null>(null);
+
+  const openDemo = (feature: string) => setActiveFeature(feature);
+  const closeDemo = () => setActiveFeature(null);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <SmoothScroll>
+      <div className="flex flex-col gap-0 bg-background overflow-x-hidden">
+        <FeatureDemoModal isOpen={!!activeFeature} onClose={closeDemo} feature={activeFeature} />
+
+        {/* 1) Hero Section - Geometric Style */}
+        <HeroGeometric />
+
+        {/* 2) Best Happening Spots (Carousel) */}
+        <section className="py-24 bg-white relative">
+          <div className="container mx-auto px-4 md:px-24 mb-12 flex justify-between items-end">
+            <div>
+              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tight mb-4">Trending <br /><span className="text-primary italic">Spots</span></h2>
+              <p className="text-xl text-muted-foreground">Curated venues with the best vibes this week.</p>
+            </div>
+            <Link href="/places">
+              <CTAButton variant="outline" className="hidden md:flex rounded-full">View All Places</CTAButton>
+            </Link>
+          </div>
+
+          <SpotsCarousel />
+        </section>
+
+        {/* 3) Upcoming Meetups (List) */}
+        <section className="py-24 bg-muted/30">
+          <SectionContainer>
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Upcoming <span className="text-primary italic">Vibes</span></h2>
+              <p className="text-muted-foreground text-lg">Join a plan and show up. It's that simple.</p>
+            </div>
+
+            <MeetupsList />
+
+            <div className="mt-12 text-center">
+              <Link href="/meetups">
+                <CTAButton className="min-w-[200px]">Find More Meetups</CTAButton>
+              </Link>
+            </div>
+          </SectionContainer>
+        </section>
+
+        {/* 4) Cities We Operate In (Marquee) */}
+        <div className="py-12 bg-black">
+          <Marquee items={["Mumbai", "Delhi", "Bangalore", "Hyderabad", "Pune", "Chennai", "Jaipur", "Goa"]} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        {/* ... Rest of the sections reused ... */}
+
+        {/* Features Grid (Reused) */}
+        {/* Features Grid (Custom Width) */}
+        <section id="features" className="py-12 md:py-24 w-full">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">Built for Connection</h2>
+          </div>
+          <FeaturesRow openDemo={openDemo} />
+        </section>
+
+        <TrustSection />
+        <NewsletterSection />
+      </div>
+    </SmoothScroll>
   );
 }

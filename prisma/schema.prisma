@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String   @unique
+  password           String
+  location           String?
+  image              String?
+  bio                String?
+  relationshipStatus String?
+  sexualOrientation  String?
+  interests          String[] @default([])
+
+  // Relational data
+  myMeetups    UserMeetup[]
+  savedMeetups UserSavedMeetup[]
+  myGroups     UserGroup[]
+  notifications Notification[]
+
+  settings Json @default("{\"newsletter\": true, \"activityNotifications\": true, \"privacy\": \"public\"}")
+
+  createdAt DateTime @default(now())
+}
+
+model Meetup {
+  id          Int      @id @default(autoincrement())
+  title       String
+  location    String
+  address     String?
+  time        String
+  attendees   Int      @default(0)
+  image       String
+  tags        String[]
+  description String?
+  mapUrl      String?
+  distance    Float?
+  isTrending  Boolean  @default(false)
+
+  // Relations
+  users      UserMeetup[]
+  savedByUsers UserSavedMeetup[]
+}
+
+model UserMeetup {
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  meetup   Meetup @relation(fields: [meetupId], references: [id], onDelete: Cascade)
+  meetupId Int
+  joinedAt DateTime @default(now())
+
+  @@id([userId, meetupId])
+}
+
+model UserSavedMeetup {
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  meetup   Meetup @relation(fields: [meetupId], references: [id], onDelete: Cascade)
+  meetupId Int
+
+  @@id([userId, meetupId])
+}
+
+model Group {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  members     Int      @default(0)
+  image       String
+  tags        String[]
+  description String?
+  location    String?
+  nextEvent   String?
+
+  // Relations
+  users UserGroup[]
+}
+
+model UserGroup {
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId  Int
+  status   String @default("member") // 'member' or 'pending'
+  joinedAt DateTime @default(now())
+
+  @@id([userId, groupId])
+}
+
+model Spot {
+  id       Int      @id @default(autoincrement())
+  name     String
+  type     String
+  rating   Float
+  image    String
+  vibe     String[]
+  location String?
+  distance Float?
+}
+
+model Subscriber {
+  email        String   @id
+  subscribedAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      String   // welcome, meetup_join, group_invite, system, reminder
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  link      String?
+}
